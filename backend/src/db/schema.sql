@@ -1,0 +1,2 @@
+-- Estrutura das tabelas: usuario, categoria, interesse_usuario, atividade, inscricao
+-- (ver decisões de modelagem que o time definiu antes de implementar)

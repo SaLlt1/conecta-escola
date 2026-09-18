@@ -1,0 +1,1 @@
+// Rotas de autenticação: POST /auth/registrar, POST /auth/login
