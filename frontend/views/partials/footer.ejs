@@ -1,7 +1,10 @@
 <!-- views/partials/footer.ejs (a preencher) -->
-    <footer>
-        <a class="footer">
-            aoi aoi
-        </a>
-    </footer>
+<footer>
+    Conecta Escola © 2026
+</footer>
+<script src="/js/main.js"></script>
+<% if (typeof script !== 'undefined' && script) { %>
+    <script src="/js/<%= script %>.js"></script>
+<% } %>
+</body>
 </html>
