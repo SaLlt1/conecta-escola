@@ -1,0 +1,12 @@
+/* Estilos gerais do projeto (cores, tipografia, componentes) */
+
+footer {
+    padding: 30px;
+    background: #16587B;
+    text-align: center;
+    margin-top: auto;
+}
+.footer {
+color: #f5f3ed;
+line-height: 5px;
+}

@@ -1,0 +1,25 @@
+# Dependências
+node_modules/
+package-lock.json
+
+# Variáveis de ambiente
+.env
+.env.local
+
+# Banco local
+*.sqlite
+*.sqlite3
+*.db
+
+# Build
+dist/
+build/
+
+# Editor / SO
+.DS_Store
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+
+tmp/
