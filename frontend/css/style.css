@@ -1,5 +1,68 @@
 /* Estilos gerais do projeto (cores, tipografia, componentes) */
 
+/*========================================     
+                    NAV ºo°
+ ======================================== */
+ header {
+    background: #16587B;
+    padding: 15px 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.logo a {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+nav a {
+    color: #FFFFFF;
+    text-decoration: none;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+
+    position: relative;
+    padding: 10px 0;
+    transition: 0.3s;
+}
+
+nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 2px;
+    width: 0;
+    height: 3px;
+    border-radius: 20px;
+    background: #84B3CE;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: #84B3CE;
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+/*========================================     
+                    FOOTER O_O
+ ======================================== */                                          */
 footer {
     padding: 30px;
     background: #16587B;
