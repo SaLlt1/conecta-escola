@@ -1,98 +1,93 @@
-// Regra de negócio: controle de vagas e lista de espera.
-// Uma atividade além do limite de vagas entra em espera, com posição.
-// Ao desistir alguém confirmado, o primeiro da espera é promovido.
-
 const db = require("../db/connection");
 
-function contarConfirmados(atividadeId) {
-  const linha = db
-    .prepare(
-      "SELECT COUNT(*) AS total FROM inscricao WHERE atividade_id = ? AND status = 'confirmada'"
-    )
-    .get(atividadeId);
+async function contarConfirmados(atividadeId) {
+  const [[linha]] = await db.query(
+    "SELECT COUNT(*) AS total FROM inscricao WHERE atividade_id = ? AND status = 'confirmada'",
+    [atividadeId]
+  );
   return linha.total;
 }
 
-function contarEmEspera(atividadeId) {
-  const linha = db
-    .prepare(
-      "SELECT COUNT(*) AS total FROM inscricao WHERE atividade_id = ? AND status = 'espera'"
-    )
-    .get(atividadeId);
+async function contarEmEspera(atividadeId) {
+  const [[linha]] = await db.query(
+    "SELECT COUNT(*) AS total FROM inscricao WHERE atividade_id = ? AND status = 'espera'",
+    [atividadeId]
+  );
   return linha.total;
 }
 
-// Decide se a nova inscrição entra confirmada ou em espera, e grava.
-// Retorna a inscrição criada.
-function inscrever(atividade, usuarioId) {
-  const confirmados = contarConfirmados(atividade.id);
+async function inscrever(atividade, usuarioId) {
+  const confirmados = await contarConfirmados(atividade.id);
   const temVaga = confirmados < atividade.vagas;
 
   if (temVaga) {
-    const resultado = db
-      .prepare(
-        `INSERT INTO inscricao (atividade_id, usuario_id, status, posicao_espera)
-         VALUES (?, ?, 'confirmada', NULL)`
-      )
-      .run(atividade.id, usuarioId);
-    return buscarInscricaoPorId(resultado.lastInsertRowid);
+    const [resultado] = await db.query(
+      `INSERT INTO inscricao (atividade_id, usuario_id, status, posicao_espera)
+       VALUES (?, ?, 'confirmada', NULL)`,
+      [atividade.id, usuarioId]
+    );
+    return buscarInscricaoPorId(resultado.insertId);
   }
 
-  const posicao = contarEmEspera(atividade.id) + 1;
-  const resultado = db
-    .prepare(
-      `INSERT INTO inscricao (atividade_id, usuario_id, status, posicao_espera)
-       VALUES (?, ?, 'espera', ?)`
-    )
-    .run(atividade.id, usuarioId, posicao);
-  return buscarInscricaoPorId(resultado.lastInsertRowid);
+  const posicao = (await contarEmEspera(atividade.id)) + 1;
+  const [resultado] = await db.query(
+    `INSERT INTO inscricao (atividade_id, usuario_id, status, posicao_espera)
+     VALUES (?, ?, 'espera', ?)`,
+    [atividade.id, usuarioId, posicao]
+  );
+  return buscarInscricaoPorId(resultado.insertId);
 }
 
-function buscarInscricaoPorId(id) {
-  return db.prepare("SELECT * FROM inscricao WHERE id = ?").get(id);
+async function buscarInscricaoPorId(id) {
+  const [[inscricao]] = await db.query("SELECT * FROM inscricao WHERE id = ?", [id]);
+  return inscricao;
 }
 
-// Remove a inscrição. Se ela era uma vaga confirmada, promove o primeiro
-// da lista de espera (se houver) e reordena as posições restantes.
-function cancelar(inscricao) {
-  const transacao = db.transaction(() => {
-    db.prepare("DELETE FROM inscricao WHERE id = ?").run(inscricao.id);
+async function cancelar(inscricao) {
+  const conexao = await db.getConnection();
+  try {
+    await conexao.beginTransaction();
+
+    await conexao.query("DELETE FROM inscricao WHERE id = ?", [inscricao.id]);
 
     if (inscricao.status === "confirmada") {
-      const proximo = db
-        .prepare(
-          `SELECT * FROM inscricao
-           WHERE atividade_id = ? AND status = 'espera'
-           ORDER BY posicao_espera ASC
-           LIMIT 1`
-        )
-        .get(inscricao.atividade_id);
+      const [[proximo]] = await conexao.query(
+        `SELECT * FROM inscricao
+         WHERE atividade_id = ? AND status = 'espera'
+         ORDER BY posicao_espera ASC
+         LIMIT 1`,
+        [inscricao.atividade_id]
+      );
 
       if (proximo) {
-        db.prepare(
-          "UPDATE inscricao SET status = 'confirmada', posicao_espera = NULL WHERE id = ?"
-        ).run(proximo.id);
+        await conexao.query(
+          "UPDATE inscricao SET status = 'confirmada', posicao_espera = NULL WHERE id = ?",
+          [proximo.id]
+        );
 
-        // Reordena quem ficou na espera, fechando o buraco deixado.
-        const restantes = db
-          .prepare(
-            `SELECT id FROM inscricao
-             WHERE atividade_id = ? AND status = 'espera'
-             ORDER BY posicao_espera ASC`
-          )
-          .all(inscricao.atividade_id);
+        const [restantes] = await conexao.query(
+          `SELECT id FROM inscricao
+           WHERE atividade_id = ? AND status = 'espera'
+           ORDER BY posicao_espera ASC`,
+          [inscricao.atividade_id]
+        );
 
-        restantes.forEach((linha, indice) => {
-          db.prepare("UPDATE inscricao SET posicao_espera = ? WHERE id = ?").run(
-            indice + 1,
-            linha.id
-          );
-        });
+        for (let i = 0; i < restantes.length; i++) {
+          await conexao.query("UPDATE inscricao SET posicao_espera = ? WHERE id = ?", [
+            i + 1,
+            restantes[i].id,
+          ]);
+        }
       }
     }
-  });
 
-  transacao();
+    await conexao.commit();
+  } catch (err) {
+    await conexao.rollback();
+    throw err;
+  } finally {
+    conexao.release();
+  }
 }
 
 module.exports = { contarConfirmados, contarEmEspera, inscrever, cancelar, buscarInscricaoPorId };
