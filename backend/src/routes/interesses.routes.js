@@ -1,2 +1,12 @@
-// Rotas de interesses do aluno: PUT /meus-interesses
-1234567890
+const express = require("express");
+const router = express.Router();
+const interessesController = require("../controllers/interesses.controller");
+const { autenticar, somenteResponsavel } = require("../middlewares/auth.middleware");
+
+// PUT /meus-interesses — qualquer usuário autenticado define os próprios interesses.
+router.put("/meus-interesses", autenticar, interessesController.atualizarMeusInteresses);
+
+// GET /interesses/agregados — só o responsável (decisão institucional).
+router.get("/interesses/agregados", autenticar, somenteResponsavel, interessesController.agregados);
+
+module.exports = router;
