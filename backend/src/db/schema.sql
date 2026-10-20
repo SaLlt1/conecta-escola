@@ -1,6 +1,6 @@
 -- Schema do Mural de Atividades e Grupos da Escola
--- Espelha exatamente as decisoes de docs/BANCO_DE_DADOS.md
 -- Nao guardar idade, telefone, endereco, foto ou texto livre de interesse.
+-- Nao existe tabela de mensagens (decisao de projeto: sem mensagem privada).
 
 CREATE TABLE IF NOT EXISTS usuario (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS atividade (
   local TEXT,
   horario TEXT,
   vagas INTEGER NOT NULL DEFAULT 0,
-  responsavel_id INTEGER NOT NULL REFERENCES usuario(id)
+
+  responsavel_id INTEGER NOT NULL REFERENCES usuario(id),
+  status TEXT NOT NULL DEFAULT 'ativa' CHECK (status IN ('ativa', 'inativa'))
 );
 
 CREATE TABLE IF NOT EXISTS inscricao (
@@ -39,4 +41,12 @@ CREATE TABLE IF NOT EXISTS inscricao (
   usuario_id INTEGER NOT NULL REFERENCES usuario(id) ON DELETE CASCADE,
   status TEXT NOT NULL CHECK (status IN ('confirmada', 'espera')),
   posicao_espera INTEGER,
-  UNIQUE (atividade_id, usuario_id))
+  criada_em TEXT NOT NULL DEFAULT (datetime('now')),
+  UNIQUE (atividade_id, usuario_id)
+);
+
+-- Lista fechada de categorias/interesses (evita texto livre no perfil do aluno)
+INSERT OR IGNORE INTO categoria (nome) VALUES
+  ('Xadrez'), ('RPG'), ('Robótica'), ('Leitura e mangá'), ('Música e banda'),
+  ('Esportes'), ('Voleibol'), ('Desenho e artes visuais'),
+  ('Ciências e astronomia'), ('Programação'), ('Teatro'), ('Debate e redação');
