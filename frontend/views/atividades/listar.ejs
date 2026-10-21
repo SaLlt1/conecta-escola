@@ -1,1 +1,83 @@
 <!-- views/atividades/listar.ejs — mural de atividades (a preencher) -->
+<%- include('../partials/header', { titulo: 'Atividades' }) %>
+<%- include('../partials/nav', { pagina: 'atividades' }) %>
+<%
+    const atividades = locals.atividades || [];
+    const categorias = locals.categorias || [];
+    const filtroCategoria = locals.categoriaSelecionada || '';
+    const cores = ['azul', 'bege', 'marrom-claro', 'marrom'];
+%>
+
+<main>
+
+    <section class="page-header">
+        <h1>Mural de atividades</h1>
+        <p>Clubes, oficinas e grupos da escola. Encontre o que combina com você e garanta sua vaga.</p>
+    </section>
+
+    <section class="conteudo">
+
+        <form class="filtros" id="form-filtros" method="get" action="/atividades">
+
+            <div class="campo">
+                <label for="busca">Buscar</label>
+                <input type="search" id="busca" name="busca" placeholder="Nome da atividade"
+                       value="<%= locals.busca || '' %>">
+            </div>
+
+            <div class="campo">
+                <label for="categoria">Categoria</label>
+                <select id="categoria" name="categoria">
+                    <option value="">Todas</option>
+                    <% categorias.forEach(function (c) { %>
+                        <option value="<%= c.id %>" <%= String(c.id) === String(filtroCategoria) ? 'selected' : '' %>><%= c.nome %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <button type="submit" class="botao">Filtrar</button>
+
+        </form>
+
+        <div id="mensagem" class="mensagem mensagem-erro" role="alert"></div>
+
+        <div class="paleta tres" id="lista-atividades">
+
+            <% atividades.forEach(function (a, i) { %>
+                <% const lotada = a.vagas_disponiveis !== undefined && a.vagas_disponiveis <= 0; %>
+                <article class="cor">
+                    <div class="amostra <%= cores[i % cores.length] %>"></div>
+                    <div class="info">
+                        <span class="badge"><%= a.categoria_nome || a.categoria || 'Atividade' %></span>
+                        <h3><%= a.nome %></h3>
+                        <p><%= a.descricao || 'Sem descrição.' %></p>
+
+                        <ul class="meta-lista">
+                            <% if (a.local) { %><li><strong>Local:</strong> <%= a.local %></li><% } %>
+                            <% if (a.horario) { %><li><strong>Horário:</strong> <%= a.horario %></li><% } %>
+                            <li>
+                                <strong>Vagas:</strong>
+                                <%= a.vagas_disponiveis !== undefined ? a.vagas_disponiveis + ' de ' + a.vagas : a.vagas %>
+                                <% if (lotada) { %><span class="badge badge-lotada">Lotada · lista de espera</span><% } %>
+                            </li>
+                        </ul>
+
+                        <div class="meta">
+                            <a href="/atividades/<%= a.id %>" class="link-card">Ver detalhes →</a>
+                        </div>
+                    </div>
+                </article>
+            <% }) %>
+
+        </div>
+
+        <div class="vazio" id="estado-vazio" <%- atividades.length ? 'hidden' : '' %>>
+            <h3>Nenhuma atividade encontrada</h3>
+            <p>Tente outra categoria ou volte mais tarde, novas atividades são publicadas com frequência.</p>
+        </div>
+
+    </section>
+
+</main>
+
+<%- include('../partials/footer', { script: 'mural' }) %>
