@@ -1,1 +1,103 @@
 <!-- views/index.ejs (a preencher: página inicial) -->
+<%- include('partials/header', { titulo: 'Início' }) %>
+<%- include('partials/nav', { pagina: 'inicio' }) %>
+
+<main>
+
+    <section class="hero" id="inicio">
+
+        <div class="hero-text">
+            <h1>Conectando alunos a atividades e grupos escolares.</h1>
+
+            <p>
+                Descubra clubes, oficinas e grupos de interesse,
+                inscreva-se nas vagas e acompanhe tudo
+                em um espaço criado para aproximar alunos, com sua escola e responsáveis.
+            </p>
+
+            <a href="/atividades" class="botao">
+                Explorar atividades
+            </a>
+        </div>
+
+        <div class="hero-card">
+            <span>CONECTA ESCOLA · 2026</span>
+
+            <h2>Conhecimento que conecta.</h2>
+
+            <p>
+                Incentivamos a participação, a criatividade
+                e o aprendizado de forma colaborativa e educativa.
+            </p>
+        </div>
+
+    </section>
+
+    <section class="cores">
+
+        <h2>Como funciona</h2>
+
+        <p>
+            Do cadastro à inscrição, tudo em poucos passos
+        </p>
+
+        <div class="paleta">
+
+            <article class="cor">
+                <div class="amostra azul"></div>
+                <div class="info">
+                    <h3>Crie sua conta</h3>
+                    <p>Cadastre-se com o e-mail institucional como aluno ou responsável.</p>
+                    <a href="/registro" class="link-card">Cadastrar-se →</a>
+                </div>
+            </article>
+
+            <article class="cor">
+                <div class="amostra bege"></div>
+                <div class="info">
+                    <h3>Escolha seus interesses</h3>
+                    <p>Selecione categorias como xadrez, robótica, teatro ou programação.</p>
+                    <a href="/atividades" class="link-card">Ver categorias →</a>
+                </div>
+            </article>
+
+            <article class="cor">
+                <div class="amostra marrom-claro"></div>
+                <div class="info">
+                    <h3>Inscreva-se</h3>
+                    <p>Garanta sua vaga ou entre na lista de espera quando a atividade estiver cheia.</p>
+                    <a href="/atividades" class="link-card">Ver atividades →</a>
+                </div>
+            </article>
+
+            <article class="cor">
+                <div class="amostra marrom"></div>
+                <div class="info">
+                    <h3>Acompanhe</h3>
+                    <p>Veja suas inscrições, posição na lista de espera ou desista quando quiser!</p>
+                    <a href="/inscricoes" class="link-card">Minhas inscrições →</a>
+                </div>
+            </article>
+
+        </div>
+
+    </section>
+
+    <section class="secao-extra">
+
+        <h2>Responsável por uma atividade?</h2>
+
+        <p>
+            Cadastre sua atividade, defina local, horário e número de vagas.
+            Acompanhe a lista de inscritos pelo painel.
+        </p>
+
+        <a href="/painel" class="botao">
+            Acessar o painel →
+        </a>
+
+    </section>
+
+</main>
+
+<%- include('partials/footer') %>
