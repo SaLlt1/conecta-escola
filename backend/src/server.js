@@ -1,136 +1,65 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const db = require("./db/connection");
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-require('dotenv').config();
 
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-
-const db = require('./db/connection');
-
-const categoriasRoutes = require('./routes/categorias.routes');
-
-const app = express();
-
-// Configurações gerais
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Configuração do EJS
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../../frontend/views'));
-
-// Arquivos estáticos: CSS, JavaScript e imagens
-app.use(express.static(path.join(__dirname, '../../frontend')));
-
-// Página inicial
-app.get('/', (req, res) => {
-    res.render('index');
+app.get("/", (req, res) => {
+  res.json({ mensagem: "API do Mural de Atividades funcionando!" });
 });
 
-// Login
-app.get('/login', (req, res) => {
-    res.render('auth/login');
-});
 
-// Registro
-app.get('/registro', (req, res) => {
-    res.render('auth/registro');
-});
-
-// Rotas de categorias (API JSON)
-app.use('/categorias', categoriasRoutes);
-
-// ---------------------------------------------------------------
-// Páginas (renderizam as views EJS)
-// ---------------------------------------------------------------
-
-// Busca no banco sem derrubar a página se o MySQL estiver fora do ar
-async function consultar(sql, params = []) {
-    try {
-        const [linhas] = await db.query(sql, params);
-        return linhas;
-    } catch (err) {
-        console.error('Erro ao consultar o banco:', err.message);
-        return [];
-    }
+// Monta apenas módulos que exportam um Express Router.
+// Rotas ainda incompletas são ignoradas com um aviso no console.
+function montarRota(caminho, modulo) {
+  const router = require(modulo);
+  if (typeof router !== "function") {
+    console.warn(`Rota ${caminho} ignorada: ${modulo} não exporta um Express Router.`);
+    return;
+  }
+  app.use(caminho, router);
 }
 
-const SQL_ATIVIDADE = `
-    SELECT atividade.*, categoria.nome AS categoria_nome, usuario.nome AS responsavel_nome,
-           (SELECT COUNT(*) FROM inscricao
-             WHERE inscricao.atividade_id = atividade.id AND inscricao.status = 'confirmada') AS inscritos,
-           (SELECT COUNT(*) FROM inscricao
-             WHERE inscricao.atividade_id = atividade.id AND inscricao.status = 'espera') AS em_espera
-    FROM atividade
-    JOIN categoria ON categoria.id = atividade.categoria_id
-    LEFT JOIN usuario ON usuario.id = atividade.responsavel_id
-`;
 
-function comVagas(a) {
-    return { ...a, vagas_disponiveis: Math.max(a.vagas - (a.inscritos || 0), 0) };
-}
+montarRota("/auth", "./routes/auth.routes");
+montarRota("/categorias", "./routes/categorias.routes");
+montarRota("/atividades", "./routes/atividades.routes");
+montarRota("/inscricoes", "./routes/inscricoes.routes");
+// O router de interesses define seus próprios caminhos completos.
+montarRota("/", "./routes/interesses.routes");
 
-// Mural de atividades
-app.get('/atividades', async (req, res) => {
-    const { categoria, busca } = req.query;
-    let sql = SQL_ATIVIDADE + " WHERE atividade.status = 'ativa'";
-    const params = [];
-    if (categoria) { sql += ' AND atividade.categoria_id = ?'; params.push(Number(categoria)); }
-    if (busca) { sql += ' AND atividade.nome LIKE ?'; params.push(`%${busca}%`); }
-    sql += ' ORDER BY atividade.id DESC';
 
-    const atividades = (await consultar(sql, params)).map(comVagas);
-    const categorias = await consultar('SELECT id, nome FROM categoria ORDER BY nome');
-    res.render('atividades/listar', { atividades, categorias, categoriaSelecionada: categoria || '', busca: busca || '' });
-});
-
-// Nova atividade (precisa vir ANTES de /atividades/:id)
-app.get('/atividades/nova', async (req, res) => {
-    const categorias = await consultar('SELECT id, nome FROM categoria ORDER BY nome');
-    res.render('atividades/form', { categorias });
-});
-
-// Detalhes da atividade
-app.get('/atividades/:id', async (req, res, next) => {
-    const [atividade] = await consultar(SQL_ATIVIDADE + ' WHERE atividade.id = ?', [req.params.id]);
-    if (!atividade) return next();
-    res.render('atividades/detalhes', { atividade: comVagas(atividade) });
-});
-
-// Editar atividade
-app.get('/atividades/:id/editar', async (req, res, next) => {
-    const [atividade] = await consultar('SELECT * FROM atividade WHERE id = ?', [req.params.id]);
-    if (!atividade) return next();
-    const categorias = await consultar('SELECT id, nome FROM categoria ORDER BY nome');
-    res.render('atividades/form', { atividade, categorias });
-});
-
-// Minhas inscrições e painel: dependem do usuário logado (token JWT no navegador),
-// então a página carrega vazia e os dados vêm do JavaScript do front-end.
-app.get('/inscricoes', (req, res) => {
-    res.render('inscricoes/listar');
-});
-
-app.get('/painel', (req, res) => {
-    res.render('painel/index');
-});
-
-// Página não encontrada
 app.use((req, res) => {
-    res.status(404).send('Página não encontrada');
+  res.status(404).json({ erro: "Rota não encontrada." });
 });
 
-// Iniciar servidor
-const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ erro: "Erro interno do servidor." });
 });
+
+
+const PORTA = Number(process.env.PORT) || 3000;
+
+
+async function iniciar() {
+  try {
+    // Confirma a conexão antes de informar que o servidor está disponível.
+    await db.query("SELECT 1");
+    app.listen(PORTA, () => {
+      console.log(`Servidor rodando em http://localhost:${PORTA}`);
+    });
+  } catch (err) {
+    console.error("Não foi possível conectar ao banco MySQL:", err.message);
+    process.exitCode = 1;
+  }
+}
+
+
+iniciar();
