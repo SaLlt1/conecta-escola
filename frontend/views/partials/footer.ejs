@@ -1,10 +1,11 @@
 <footer>
-    <p class="footer"> Conecta Escola © 2026 </p>
-  </footer>
-  <script src="/js/main.js"></script>
-  <% if (typeof script !== 'undefined' && script) { %>
-      <script src="/js/<%= script %>.js"></script>
-  <% } %>
-  </body>
-  </html>
-  
+    <p class="footer">Conecta Escola © 2026</p>
+</footer>
+
+<script src="/js/api.js"></script>
+<% if (locals.script) { %>
+<script src="/js/<%= locals.script %>.js"></script>
+<% } %>
+</body>
+
+</html>
