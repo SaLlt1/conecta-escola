@@ -1,14 +1,18 @@
-<!-- views/partials/nav.ejs (a preencher) -->
+<%
+    const atual = locals.pagina || '';
+    const ativo = (nome) => atual === nome ? ' class="ativo"' : '';
+%>
 <header>
     <div class="logo">
-        <a href="/" style="text-decoration: none; color: inherit;">Conecta Escola </a>
+        <a href="/">Conecta Escola</a>
     </div>
+
     <nav>
-        <a href="/">Início</a>
-        <a href="/livros">Livros</a>
-        <a href="/clubes">Clubes</a>
-        <a href="/atividades">Atividades</a>
-        <a href="/responsaveis">Painél</a> <!--SOMENTE para os RESPONSÁVEIS-->
-        <a href="/login">Login</a>
+        <a href="/"<%- ativo('inicio') %>>Início</a>
+        <a href="/atividades"<%- ativo('atividades') %>>Atividades</a>
+        <a href="/inscricoes"<%- ativo('inscricoes') %>>Minhas inscrições</a>
+        <!-- SOMENTE para os RESPONSÁVEIS ↓↓↓ -->
+        <a href="/painel"<%- ativo('painel') %>>Painel</a>
+        <a href="/login"<%- ativo('login') %>>Login</a>
     </nav>
 </header>
