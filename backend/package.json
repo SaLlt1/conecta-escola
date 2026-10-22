@@ -1,11 +1,12 @@
+
 {
   "name": "conecta-escola",
   "version": "1.0.0",
   "description": "Projeto Conecta Escola",
-  "main": "backend/src/server.js",
+  "main": "src/server.js",
   "scripts": {
-    "dev": "node backend/src/server.js",
-    "start": "node backend/src/server.js"
+    "dev": "node src/server.js",
+    "start": "node src/server.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
