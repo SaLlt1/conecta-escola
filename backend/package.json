@@ -1,1 +1,17 @@
-{"name":"conecta-escola-backend","version":"1.0.0","scripts":{"dev":"node src/server.js","start":"node src/server.js"},"dependencies":{"cors":"^2.8.6","express":"^5.2.1","mysql2":"^3.24.5"}}
+{
+  "name": "conecta-escola",
+  "version": "1.0.0",
+  "description": "Projeto Conecta Escola",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "dev": "node backend/src/server.js",
+    "start": "node backend/src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "ejs": "^7.0.2",
+    "express": "^5.2.1",
+    "mysql2": "^3.24.5"
+  }
+}
