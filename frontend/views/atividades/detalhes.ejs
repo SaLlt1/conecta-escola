@@ -1,12 +1,68 @@
 <!-- views/atividades/detalhes.ejs (a preencher) -->
-<footer>
-    <p class="footer">Conecta Escola © 2026</p>
-</footer>
+<%- include('../partials/header', { titulo: locals.atividade ? locals.atividade.nome : 'Atividade' }) %>
+<%- include('../partials/nav', { pagina: 'atividades' }) %>
+<%
+    const a = locals.atividade || {};
+    const disponiveis = a.vagas_disponiveis !== undefined ? a.vagas_disponiveis : a.vagas;
+    const lotada = disponiveis !== undefined && disponiveis <= 0;
+%>
 
-<script src="/js/api.js"></script>
-<% if (locals.script) { %>
-<script src="/js/<%= locals.script %>.js"></script>
-<% } %>
-</body>
+<main>
 
-</html>
+    <section class="page-header">
+        <a href="/atividades" class="link-card voltar">← Voltar ao mural</a>
+        <h1 id="atividade-nome"><%= a.nome || 'Atividade' %></h1>
+        <p>
+            <span class="badge" id="atividade-categoria"><%= a.categoria_nome || a.categoria || 'Atividade' %></span>
+            <% if (a.status) { %>
+                <span class="badge badge-<%= a.status %>"><%= a.status === 'ativa' ? 'Ativa' : 'Inativa' %></span>
+            <% } %>
+        </p>
+    </section>
+
+    <section class="conteudo">
+
+        <div id="mensagem" class="mensagem" role="alert"></div>
+
+        <div class="detalhes-grid" data-atividade-id="<%= a.id || '' %>">
+
+            <div>
+                <div class="bloco">
+                    <h2>Sobre a atividade</h2>
+                    <p id="atividade-descricao"><%= a.descricao || 'Sem descrição.' %></p>
+                </div>
+
+                <div class="bloco">
+                    <h2>Informações</h2>
+                    <ul class="meta-lista">
+                        <li><strong>Local:</strong> <span id="atividade-local"><%= a.local || 'A definir' %></span></li>
+                        <li><strong>Horário:</strong> <span id="atividade-horario"><%= a.horario || 'A definir' %></span></li>
+                        <li><strong>Responsável:</strong> <span id="atividade-responsavel"><%= a.responsavel_nome || '—' %></span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <aside class="bloco">
+                <div class="vagas" id="atividade-vagas"><%= disponiveis !== undefined ? disponiveis : '—' %></div>
+                <p class="vagas-rotulo">
+                    vagas disponíveis<% if (a.vagas !== undefined) { %> de <%= a.vagas %><% } %>
+                </p>
+
+                <% if (lotada) { %>
+                    <p class="mensagem mensagem-info">
+                        As vagas acabaram. Você ainda pode entrar na lista de espera.
+                    </p>
+                <% } %>
+
+                <button type="button" class="botao botao-bloco" id="btn-inscrever">
+                    <%= lotada ? 'Entrar na lista de espera' : 'Inscrever-me' %>
+                </button>
+            </aside>
+
+        </div>
+
+    </section>
+
+</main>
+
+<%- include('../partials/footer', { script: 'atividade' }) %>

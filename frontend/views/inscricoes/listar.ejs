@@ -1,1 +1,63 @@
 <!-- views/inscricoes/listar.ejs — minhas inscrições (a preencher) -->
+<%- include('../partials/header', { titulo: 'Minhas inscrições' }) %>
+<%- include('../partials/nav', { pagina: 'inscricoes' }) %>
+<% const inscricoes = locals.inscricoes || []; %>
+
+<main>
+
+    <section class="page-header">
+        <h1>Minhas inscrições</h1>
+        <p>Acompanhe suas atividades, sua posição na lista de espera e desista quando quiser.</p>
+    </section>
+
+    <section class="conteudo">
+
+        <div class="conteudo-estreito">
+
+            <div id="mensagem" class="mensagem" role="alert"></div>
+
+            <div class="bloco" id="lista-inscricoes">
+
+                <% if (inscricoes.length) { %>
+                    <ul class="lista">
+                        <% inscricoes.forEach(function (i) { %>
+                            <li class="lista-item" data-inscricao-id="<%= i.id %>">
+                                <div>
+                                    <h3><a href="/atividades/<%= i.atividade_id %>" class="link-card"><%= i.atividade_nome || i.nome %></a></h3>
+                                    <p>
+                                        <% if (i.horario) { %><%= i.horario %><% } %>
+                                        <% if (i.horario && i.local) { %> · <% } %>
+                                        <% if (i.local) { %><%= i.local %><% } %>
+                                    </p>
+                                </div>
+
+                                <div class="lista-acoes">
+                                    <% if (i.status === 'espera') { %>
+                                        <span class="badge badge-espera">
+                                            Em espera<% if (i.posicao_espera) { %> · <%= i.posicao_espera %>º da fila<% } %>
+                                        </span>
+                                    <% } else { %>
+                                        <span class="badge badge-confirmada">Confirmada</span>
+                                    <% } %>
+                                    <button type="button" class="botao botao-perigo btn-desistir" data-id="<%= i.id %>">Desistir</button>
+                                </div>
+                            </li>
+                        <% }) %>
+                    </ul>
+                <% } else { %>
+                    <div class="vazio">
+                        <h3>Você ainda não tem inscrições</h3>
+                        <p>Explore o mural e escolha uma atividade para começar.</p>
+                        <a href="/atividades" class="botao">Ver atividades</a>
+                    </div>
+                <% } %>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<%- include('../partials/footer', { script: 'minhas-atividades' }) %>

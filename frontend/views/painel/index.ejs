@@ -1,18 +1,108 @@
 <!-- views/painel/index.ejs — painel do responsável (a preencher) -->
-<%- include('partials/header') %>
-<%- include('partials/nav') %>
-<section class="hero">
-    <div class="hero-text">
-        <h1>
-            aaaaa
-        </h1>
-        <p>
-            aaaaaa
-        </p>
-        <a href="/ahnnnn" class="botao">
-            aaaaa
-        </a>
-    </div>
-    <div class="hero-img"> </div>
-</section>
-<%- include('partials/footer') %>
+<%- include('../partials/header', { titulo: 'Painel do responsável' }) %>
+<%- include('../partials/nav', { pagina: 'painel' }) %>
+<%
+    const atividades = locals.atividades || [];
+    const totalInscritos = atividades.reduce((soma, a) => soma + (a.inscritos || 0), 0);
+    const totalEspera = atividades.reduce((soma, a) => soma + (a.em_espera || 0), 0);
+%>
+
+<main>
+
+    <section class="hero">
+
+        <div class="hero-text">
+            <h1>Painel do responsável</h1>
+
+            <p>
+                Cadastre atividades, acompanhe as vagas
+                e veja quem está inscrito ou aguardando na lista de espera.
+            </p>
+
+            <a href="/atividades/nova" class="botao">
+                Nova atividade
+            </a>
+        </div>
+
+        <div class="hero-card">
+            <span>RESUMO · 2026</span>
+
+            <h2><%= atividades.length %> <%= atividades.length === 1 ? 'atividade' : 'atividades' %></h2>
+
+            <p>
+                Mantenha local, horário e vagas sempre atualizados
+                para que os alunos encontrem o que procuram.
+            </p>
+        </div>
+
+    </section>
+
+    <section class="conteudo">
+
+        <div class="estatisticas">
+            <div class="estatistica">
+                <span>Atividades</span>
+                <strong id="stat-atividades"><%= atividades.length %></strong>
+            </div>
+            <div class="estatistica">
+                <span>Inscritos</span>
+                <strong id="stat-inscritos"><%= totalInscritos %></strong>
+            </div>
+            <div class="estatistica">
+                <span>Em espera</span>
+                <strong id="stat-espera"><%= totalEspera %></strong>
+            </div>
+        </div>
+
+        <div id="mensagem" class="mensagem" role="alert"></div>
+
+        <div class="bloco">
+
+            <h2>Minhas atividades</h2>
+
+            <% if (atividades.length) { %>
+                <div class="tabela-wrap">
+                    <table id="tabela-atividades">
+                        <thead>
+                            <tr>
+                                <th>Atividade</th>
+                                <th>Categoria</th>
+                                <th>Vagas</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% atividades.forEach(function (a) { %>
+                                <tr>
+                                    <td><strong><%= a.nome %></strong></td>
+                                    <td><%= a.categoria_nome || a.categoria || '—' %></td>
+                                    <td><%= a.inscritos !== undefined ? a.inscritos + ' / ' + a.vagas : a.vagas %></td>
+                                    <td>
+                                        <span class="badge badge-<%= a.status || 'ativa' %>"><%= a.status === 'inativa' ? 'Inativa' : 'Ativa' %></span>
+                                    </td>
+                                    <td>
+                                        <a href="/atividades/<%= a.id %>/editar" class="link-card">Editar</a>
+                                        &nbsp;·&nbsp;
+                                        <a href="/atividades/<%= a.id %>" class="link-card">Ver</a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } else { %>
+                <div class="vazio">
+                    <h3>Nenhuma atividade cadastrada</h3>
+                    <p>Crie a primeira atividade para que os alunos possam se inscrever.</p>
+                    <a href="/atividades/nova" class="botao">Cadastrar atividade</a>
+                </div>
+            <% } %>
+
+        </div>
+
+    </section>
+
+</main>
+
+<%- include('../partials/footer', { script: 'painel-responsavel' }) %>
