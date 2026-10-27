@@ -1,19 +1,19 @@
 {
-  "name": "mural-atividades-backend",
-  "version": "0.1.0",
-  "description": "Backend do Mural de Atividades e Grupos da Escola",
-  "main": "src/server.js",
-  "type": "commonjs",
+  "name": "conecta-escola",
+  "version": "1.0.0",
+  "description": "Projeto Conecta Escola",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "node --watch src/server.js"
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.11.0"
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.8",
+    "ejs": "^7.0.2",
+    "express": "^5.2.1",
+    "mysql2": "^3.24.5"
   }
 }
