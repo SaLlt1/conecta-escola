@@ -1,30 +1,39 @@
-const db = require("../db/connection");
-const { interessesAgregados } = require("../services/agregacao.service");
+import type { NextFunction, Request, Response } from "express";
+import db from "../db/connection";
+import { interessesAgregados } from "../services/agregacao.service";
+import type { Categoria, Linha } from "../types";
 
-async function atualizarMeusInteresses(req, res, next) {
+export async function atualizarMeusInteresses(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
   try {
     const { categorias } = req.body || {};
 
     if (!Array.isArray(categorias) || categorias.length === 0) {
-      return res.status(400).json({ erro: "Selecione pelo menos um interesse." });
+      res.status(400).json({ erro: "Selecione pelo menos um interesse." });
+      return;
     }
 
-    const ids = [...new Set(categorias.map(Number))];
+    const ids: number[] = [...new Set(categorias.map(Number))];
     if (ids.some((id) => !Number.isInteger(id))) {
-      return res.status(400).json({ erro: "Lista de categorias inválida." });
+      res.status(400).json({ erro: "Lista de categorias inválida." });
+      return;
     }
 
     const placeholders = ids.map(() => "?").join(",");
-    const [validas] = await db.query(
+    const [validas] = await db.query<Linha<{ id: number }>[]>(
       `SELECT id FROM categoria WHERE id IN (${placeholders})`,
       ids
     );
 
     if (validas.length !== ids.length) {
-      return res.status(400).json({ erro: "Uma ou mais categorias não existem." });
+      res.status(400).json({ erro: "Uma ou mais categorias não existem." });
+      return;
     }
 
-    const usuarioId = req.usuario.id;
+    const usuarioId = req.usuario!.id;
     const conexao = await db.getConnection();
     try {
       await conexao.beginTransaction();
@@ -43,7 +52,7 @@ async function atualizarMeusInteresses(req, res, next) {
       conexao.release();
     }
 
-    const [atualizados] = await db.query(
+    const [atualizados] = await db.query<Linha<Categoria>[]>(
       `SELECT categoria.id, categoria.nome
        FROM interesse_usuario
        JOIN categoria ON categoria.id = interesse_usuario.categoria_id
@@ -52,18 +61,16 @@ async function atualizarMeusInteresses(req, res, next) {
       [usuarioId]
     );
 
-    return res.json(atualizados);
+    res.json(atualizados);
   } catch (err) {
-    return next(err);
+    next(err);
   }
 }
 
-async function agregados(req, res, next) {
+export async function agregados(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    return res.json(await interessesAgregados());
+    res.json(await interessesAgregados());
   } catch (err) {
-    return next(err);
+    next(err);
   }
 }
-
-module.exports = { atualizarMeusInteresses, agregados };
