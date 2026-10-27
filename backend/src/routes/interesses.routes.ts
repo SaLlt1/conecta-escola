@@ -1,7 +1,8 @@
-const express = require("express");
-const router = express.Router();
-const interessesController = require("../controllers/interesses.controller");
-const { autenticar, somenteResponsavel } = require("../middlewares/auth.middleware");
+import { Router } from "express";
+import * as interessesController from "../controllers/interesses.controller";
+import { autenticar, somenteResponsavel } from "../middlewares/auth.middleware";
+
+const router = Router();
 
 // PUT /meus-interesses — qualquer usuário autenticado define os próprios interesses.
 router.put("/meus-interesses", autenticar, interessesController.atualizarMeusInteresses);
@@ -9,4 +10,4 @@ router.put("/meus-interesses", autenticar, interessesController.atualizarMeusInt
 // GET /interesses/agregados — só o responsável (decisão institucional).
 router.get("/interesses/agregados", autenticar, somenteResponsavel, interessesController.agregados);
 
-module.exports = router;
+export default router;
