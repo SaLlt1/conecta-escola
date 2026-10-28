@@ -6,7 +6,7 @@ export async function buscarInteressesDoUsuario(usuarioId: number): Promise<Set<
     "SELECT categoria_id FROM interesse_usuario WHERE usuario_id = ?",
     [usuarioId]
   );
-  return new Set(linhas.map((l) => l.categoria_id));
+  return new Set(linhas.map((l: { categoria_id: any; }) => l.categoria_id));
 }
 
 // Aceita qualquer objeto que tenha categoria_id e devolve o mesmo objeto + `compativel`.

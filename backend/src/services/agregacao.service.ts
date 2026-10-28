@@ -33,8 +33,8 @@ export async function interessesAgregados(): Promise<InteresseAgregado[]> {
   );
 
   return linhas
-    .filter((linha) => linha.total_interessados >= MINIMO_PARA_EXIBIR)
-    .map((linha) => ({
+    .filter((linha: { total_interessados: number; }) => linha.total_interessados >= MINIMO_PARA_EXIBIR)
+    .map((linha: { categoria_id: any; categoria_nome: any; total_interessados: any; total_atividades: number; }) => ({
       categoria_id: linha.categoria_id,
       categoria: linha.categoria_nome,
       total_interessados: linha.total_interessados,
