@@ -58,4 +58,3 @@ INSERT IGNORE INTO categoria (nome) VALUES
 ('Xadrez'),('RPG'),('Robótica'),('Leitura e mangá'),('Música e banda'),
 ('Esportes'),('Voleibol'),('Desenho e artes visuais'),
 ('Ciências e astronomia'),('Programação'),('Teatro'),('Debate e redação');
-
