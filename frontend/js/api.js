@@ -4,7 +4,7 @@ const Api = (function () {
     const CHAVE_TOKEN = "conecta_token";
     const CHAVE_USUARIO = "conecta_usuario";
 
-    // ---------- Sessão (token JWT + dados básicos do usuário) ----------
+    // ---------- Sessão (token JWT + dados básicos dos usuários :o) ----------
 
     function lerStorage(chave) {
         try {
@@ -33,7 +33,7 @@ const Api = (function () {
             localStorage.setItem(CHAVE_TOKEN, token);
             localStorage.setItem(CHAVE_USUARIO, JSON.stringify(usuario));
         } catch (e) {
-            // storage bloqueado: o login não persiste, mas a página não quebra
+            
         }
     }
 
@@ -49,7 +49,7 @@ const Api = (function () {
         window.location.href = "/login";
     }
 
-    // Só aceita caminhos internos (evita redirecionar para outro site via ?next=)
+    // Só aceita caminhos internos 
     function destinoSeguro(destino) {
         if (typeof destino === "string" && destino.startsWith("/") && !destino.startsWith("//")) {
             return destino;
@@ -62,8 +62,8 @@ const Api = (function () {
         window.location.href = "/login?next=" + encodeURIComponent(atual);
     }
 
-    // Exige login (e, opcionalmente, um papel). Retorna o usuário, ou null
-    // se redirecionou — nesse caso a página deve parar o que estava fazendo.
+    // Exige login e retorna o usuário, ou null
+    // se redirecionou: a página deve parar o que estava fazendo.
     function exigirLogin(papel) {
         const usuario = getUsuario();
         if (!getToken() || !usuario) {
@@ -78,8 +78,8 @@ const Api = (function () {
 
     // ---------- Requisições ----------
 
-    // Chama a API. `opcoes`: { method, body }. Sempre manda o token, se houver.
-    // Em caso de erro lança Error com `.status` e a mensagem vinda do backend.
+    // Chama a API. `opcoes`: Sempre manda o token, se tiver.
+    // Em caso de erro lança Error e a mensagem vinda do backend.
     async function chamar(caminho, opcoes) {
         opcoes = opcoes || {};
         const headers = {};
@@ -101,7 +101,7 @@ const Api = (function () {
             throw erro;
         }
 
-        // 204 (ex.: desistir da inscrição) não tem corpo
+    
         let dados = null;
         if (resposta.status !== 204) {
             try {
@@ -112,7 +112,7 @@ const Api = (function () {
         }
 
         if (!resposta.ok) {
-            // Token expirado/inválido: limpa a sessão para o usuário logar de novo
+            // Token expirado/inválido: pra limpar a sessão pro usuário logar de novo
             if (resposta.status === 401 && token) limparSessao();
             const erro = new Error((dados && dados.erro) || "Erro ao processar a requisição.");
             erro.status = resposta.status;
@@ -122,9 +122,9 @@ const Api = (function () {
         return dados;
     }
 
-    // ---------- Mensagens na tela (#mensagem) ----------
+    // ---------- Mensagens na tela ----------
 
-    // tipo: "erro" | "sucesso" | "info"
+    // tipo: "erro", "sucesso", "info"
     function mostrarMensagem(texto, tipo) {
         const caixa = document.getElementById("mensagem");
         if (!caixa) return;
@@ -138,9 +138,8 @@ const Api = (function () {
         caixa.textContent = "";
     }
 
-    // ---------- Pequenos utilitários de DOM ----------
+    // ---------- Pequenos utilitários de DOM :/ ----------
 
-    // criar("span", "badge", "texto") — usa textContent, então nunca interpreta HTML
     function criar(tag, classe, texto) {
         const elemento = document.createElement(tag);
         if (classe) elemento.className = classe;
@@ -159,7 +158,7 @@ const Api = (function () {
         botao.disabled = bloqueado;
     }
 
-    // ---------- Navegação: ajusta o menu conforme quem está logado ----------
+    // ---------- Navegação: ajusta o menu conforme quem está logado :O ----------
 
     function atualizarNav() {
         const nav = document.querySelector("header nav");
@@ -172,7 +171,7 @@ const Api = (function () {
         const linkInscricoes = nav.querySelector('a[href="/inscricoes"]');
         const linkLogin = nav.querySelector('a[href="/login"]');
 
-        // Painel só para responsáveis; "Minhas inscrições" só para alunos
+        // Painel só para responsáveis; e "Minhas inscrições" só para alunos
         if (linkPainel && !(logado && usuario.papel === "responsavel")) linkPainel.hidden = true;
         if (linkInscricoes && logado && usuario.papel === "responsavel") linkInscricoes.hidden = true;
 
