@@ -1,9 +1,25 @@
-const db = require("../db/connection");
+import db from "../db/connection";
+import type { Linha } from "../types";
 
-const MINIMO_PARA_EXIBIR = 5;
+export const MINIMO_PARA_EXIBIR = 5;
 
-async function interessesAgregados() {
-  const [linhas] = await db.query(
+interface LinhaAgregada {
+  categoria_id: number;
+  categoria_nome: string;
+  total_interessados: number;
+  total_atividades: number;
+}
+
+export interface InteresseAgregado {
+  categoria_id: number;
+  categoria: string;
+  total_interessados: number;
+  total_atividades: number;
+  sem_atividade_correspondente: boolean;
+}
+
+export async function interessesAgregados(): Promise<InteresseAgregado[]> {
+  const [linhas] = await db.query<Linha<LinhaAgregada>[]>(
     `SELECT
        categoria.id AS categoria_id,
        categoria.nome AS categoria_nome,
@@ -26,5 +42,3 @@ async function interessesAgregados() {
       sem_atividade_correspondente: linha.total_atividades === 0,
     }));
 }
-
-module.exports = { interessesAgregados, MINIMO_PARA_EXIBIR };

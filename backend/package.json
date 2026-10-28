@@ -1,12 +1,13 @@
-
 {
   "name": "conecta-escola",
   "version": "1.0.0",
   "description": "Projeto Conecta Escola",
-  "main": "src/server.js",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "node src/server.js",
-    "start": "node src/server.js"
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "cors": "^2.8.6",
@@ -14,5 +15,12 @@
     "ejs": "^7.0.2",
     "express": "^5.2.1",
     "mysql2": "^3.24.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   }
 }

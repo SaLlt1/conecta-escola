@@ -1,27 +1,39 @@
-const db = require("../db/connection");
+import type { ResultSetHeader } from "mysql2";
+import db from "../db/connection";
+import type { Atividade, Inscricao, Linha } from "../types";
 
-async function contarConfirmados(atividadeId) {
-  const [[linha]] = await db.query(
+type Total = Linha<{ total: number }>;
+
+export async function contarConfirmados(atividadeId: number): Promise<number> {
+  const [[linha]] = await db.query<Total[]>(
     "SELECT COUNT(*) AS total FROM inscricao WHERE atividade_id = ? AND status = 'confirmada'",
     [atividadeId]
   );
   return linha.total;
 }
 
-async function contarEmEspera(atividadeId) {
-  const [[linha]] = await db.query(
+export async function contarEmEspera(atividadeId: number): Promise<number> {
+  const [[linha]] = await db.query<Total[]>(
     "SELECT COUNT(*) AS total FROM inscricao WHERE atividade_id = ? AND status = 'espera'",
     [atividadeId]
   );
   return linha.total;
 }
 
-async function inscrever(atividade, usuarioId) {
+export async function buscarInscricaoPorId(id: number): Promise<Linha<Inscricao>> {
+  const [[inscricao]] = await db.query<Linha<Inscricao>[]>(
+    "SELECT * FROM inscricao WHERE id = ?",
+    [id]
+  );
+  return inscricao;
+}
+
+export async function inscrever(atividade: Atividade, usuarioId: number): Promise<Linha<Inscricao>> {
   const confirmados = await contarConfirmados(atividade.id);
   const temVaga = confirmados < atividade.vagas;
 
   if (temVaga) {
-    const [resultado] = await db.query(
+    const [resultado] = await db.query<ResultSetHeader>(
       `INSERT INTO inscricao (atividade_id, usuario_id, status, posicao_espera)
        VALUES (?, ?, 'confirmada', NULL)`,
       [atividade.id, usuarioId]
@@ -30,7 +42,7 @@ async function inscrever(atividade, usuarioId) {
   }
 
   const posicao = (await contarEmEspera(atividade.id)) + 1;
-  const [resultado] = await db.query(
+  const [resultado] = await db.query<ResultSetHeader>(
     `INSERT INTO inscricao (atividade_id, usuario_id, status, posicao_espera)
      VALUES (?, ?, 'espera', ?)`,
     [atividade.id, usuarioId, posicao]
@@ -38,12 +50,7 @@ async function inscrever(atividade, usuarioId) {
   return buscarInscricaoPorId(resultado.insertId);
 }
 
-async function buscarInscricaoPorId(id) {
-  const [[inscricao]] = await db.query("SELECT * FROM inscricao WHERE id = ?", [id]);
-  return inscricao;
-}
-
-async function cancelar(inscricao) {
+export async function cancelar(inscricao: Inscricao): Promise<void> {
   const conexao = await db.getConnection();
   try {
     await conexao.beginTransaction();
@@ -51,7 +58,7 @@ async function cancelar(inscricao) {
     await conexao.query("DELETE FROM inscricao WHERE id = ?", [inscricao.id]);
 
     if (inscricao.status === "confirmada") {
-      const [[proximo]] = await conexao.query(
+      const [[proximo]] = await conexao.query<Linha<Inscricao>[]>(
         `SELECT * FROM inscricao
          WHERE atividade_id = ? AND status = 'espera'
          ORDER BY posicao_espera ASC
@@ -65,7 +72,7 @@ async function cancelar(inscricao) {
           [proximo.id]
         );
 
-        const [restantes] = await conexao.query(
+        const [restantes] = await conexao.query<Linha<{ id: number }>[]>(
           `SELECT id FROM inscricao
            WHERE atividade_id = ? AND status = 'espera'
            ORDER BY posicao_espera ASC`,
@@ -89,5 +96,3 @@ async function cancelar(inscricao) {
     conexao.release();
   }
 }
-
-module.exports = { contarConfirmados, contarEmEspera, inscrever, cancelar, buscarInscricaoPorId };

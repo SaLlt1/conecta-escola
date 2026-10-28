@@ -1,13 +1,14 @@
-const express = require("express");
-const router = express.Router();
-const atividadesController = require("../controllers/atividades.controller");
-const inscricoesController = require("../controllers/inscricoes.controller");
-const {
+import { Router } from "express";
+import * as atividadesController from "../controllers/atividades.controller";
+import * as inscricoesController from "../controllers/inscricoes.controller";
+import {
   autenticar,
   autenticarOpcional,
   somenteResponsavel,
   somenteAluno,
-} = require("../middlewares/auth.middleware");
+} from "../middlewares/auth.middleware";
+
+const router = Router();
 
 // Mural é público, mas usa o token (se houver) para ordenar por afinidade.
 router.get("/", autenticarOpcional, atividadesController.listar);
@@ -19,5 +20,4 @@ router.put("/:id", autenticar, somenteResponsavel, atividadesController.atualiza
 router.get("/:id/inscritos", autenticar, somenteResponsavel, atividadesController.inscritos);
 router.post("/:id/inscricoes", autenticar, somenteAluno, inscricoesController.inscrever);
 
-module.exports = router;
-
+export default router;

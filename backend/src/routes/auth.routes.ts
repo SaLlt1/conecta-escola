@@ -1,9 +1,10 @@
 // Rotas de autenticação: POST /auth/registrar, POST /auth/login
-const express = require("express");
-const router = express.Router();
-const authController = require("../controllers/auth.controller");
+import { Router } from "express";
+import * as authController from "../controllers/auth.controller";
+
+const router = Router();
 
 router.post("/registrar", authController.registrar);
 router.post("/login", authController.login);
 
-module.exports = router;
+export default router;
