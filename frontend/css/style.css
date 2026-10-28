@@ -1,21 +1,54 @@
-/* Estilos gerais do projeto (cores, tipografia, componentes) */
+/* ============================================================
+   GERAL (reset, body, tipografia)
+   ============================================================ */
 
-/*========================================     
-                    NAV ºo°
- ======================================== */
- header {
+   * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "DM Sans", sans-serif;
+    background: #ffffff;
+    color: #344B59;
+    line-height: 1.7;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+h1, h2, h3, .logo {
+    font-family: "Nunito", sans-serif;
+}
+
+a {
+    transition: 0.3s ease;
+}
+
+/* ============================================================
+   HEADER / NAVEGAÇÃO
+   ============================================================ */
+
+header {
     background: #16587B;
-    padding: 15px 30px;
-
+    padding: 18px 7%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 25px;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 15px #123b5015;
 }
 
 .logo {
-    font-family: "Playfair Display", serif;
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -1px;
 }
 
 .logo a {
@@ -26,50 +59,827 @@
 nav {
     display: flex;
     align-items: center;
-    gap: 30px;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
 }
 
 nav a {
     color: #FFFFFF;
     text-decoration: none;
-    font-family: Arial, sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-
+    font-size: 0.95rem;
+    font-weight: 600;
     position: relative;
-    padding: 10px 0;
-    transition: 0.3s;
+    padding: 8px 0;
 }
 
 nav a::after {
     content: "";
     position: absolute;
     left: 0;
-    bottom: 2px;
+    bottom: 0;
     width: 0;
-    height: 3px;
-    border-radius: 20px;
+    height: 2px;
+    border-radius: 10px;
     background: #84B3CE;
-    transition: 0.3s;
+    transition: width 0.3s ease;
 }
 
-nav a:hover {
-    color: #84B3CE;
+nav a:hover,
+nav a.ativo {
+    color: #BBDDEC;
 }
 
-nav a:hover::after {
+nav a:hover::after,
+nav a.ativo::after {
     width: 100%;
 }
-/*========================================     
-                    FOOTER O_O
- ======================================== */                                          */
-footer {
+
+@media (max-width: 1000px) {
+    header {
+        justify-content: center;
+    }
+
+    nav {
+        gap: 18px;
+    }
+}
+
+@media (max-width: 650px) {
+    header {
+        padding: 20px;
+        flex-direction: column;
+    }
+
+    .logo {
+        font-size: 1.7rem;
+    }
+
+    nav {
+        gap: 10px 20px;
+    }
+}
+
+/* ============================================================
+   BOTÕES
+   ============================================================ */
+
+.botao {
+    display: inline-block;
+    background: #16587B;
+    color: #FFFFFF;
+    text-decoration: none;
+    padding: 13px 25px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 5px 12px #16587B20;
+}
+
+.botao:hover {
+    background: #10445F;
+    transform: translateY(-2px);
+}
+
+.botao-secundario {
+    background: transparent;
+    color: #16587B;
+    border: 2px solid #16587B;
+    box-shadow: none;
+    padding: 11px 23px;
+}
+
+.botao-secundario:hover {
+    background: #16587B;
+    color: #FFFFFF;
+}
+
+.botao-perigo {
+    background: transparent;
+    color: #A33A2F;
+    border: 2px solid #A33A2F;
+    box-shadow: none;
+    padding: 8px 16px;
+    font-size: 0.88rem;
+}
+
+.botao-perigo:hover {
+    background: #A33A2F;
+    color: #FFFFFF;
+}
+
+.botao-pequeno {
+    padding: 8px 16px;
+    font-size: 0.88rem;
+}
+
+.botao-bloco {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.botao:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ============================================================
+   PÁGINA INICIAL — Banner principal (hero)
+   ============================================================ */
+
+.hero {
+    padding: 85px 8%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 55px;
+    background: #FFFFFF;
+}
+
+.hero-text {
+    flex: 1;
+    max-width: 620px;
+}
+
+.hero-text h1 {
+    color: #16587B;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    line-height: 1.2;
+    font-weight: 800;
+    margin-bottom: 22px;
+}
+
+.hero-text p {
+    color: #657781;
+    font-size: 1.05rem;
+    margin-bottom: 30px;
+    max-width: 540px;
+}
+
+.hero-card {
+    flex: 0 1 390px;
+    padding: 40px;
+    border-radius: 24px;
+    background: #16587B;
+    color: #FFFFFF;
+    box-shadow: 0 15px 35px #16587B25;
+}
+
+.hero-card span {
+    display: inline-block;
+    color: #BBDDEC;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+.hero-card h2 {
+    font-size: 2rem;
+    line-height: 1.3;
+    margin-bottom: 15px;
+}
+
+.hero-card p {
+    color: #E2EEF3;
+}
+
+@media (max-width: 650px) {
+    .hero {
+        padding: 50px 7%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 30px;
+    }
+
+    .hero-card {
+        flex-basis: auto;
+        padding: 30px;
+    }
+}
+
+/* ============================================================
+   CARDS / PALETA (usados na página inicial e nas listagens)
+   ============================================================ */
+
+.cores {
+    padding: 75px 8%;
+    text-align: center;
+}
+
+.cores > h2 {
+    color: #16587B;
+    font-size: 2.3rem;
+    margin-bottom: 10px;
+}
+
+.cores > p {
+    color: #657781;
+    margin: 0 auto 40px;
+    max-width: 650px;
+}
+
+.paleta {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    text-align: left;
+}
+
+.paleta.tres {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cor {
+    background: #FFFFFF;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #E6E0D5;
+    box-shadow: 0 5px 20px #344B590A;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.cor:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px #344B5918;
+}
+
+.amostra {
+    height: 9px;
+    width: 100%;
+}
+
+.marrom { background: #84B3CE; }
+.marrom-claro { background: #16587B; }
+.bege { background: #84B3CE; }
+.azul { background: #16587B; }
+
+.info {
+    padding: 25px 22px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.info h3 {
+    color: #16587B;
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+.info p {
+    color: #657781;
+    font-size: 0.94rem;
+    margin-bottom: 20px;
+}
+
+.info .meta {
+    margin-top: auto;
+}
+
+.link-card {
+    color: #16587B;
+    font-weight: 700;
+    font-size: 0.92rem;
+    text-decoration: none;
+}
+
+.link-card:hover {
+    color: #4986A5;
+}
+
+@media (max-width: 1000px) {
+    .paleta,
+    .paleta.tres {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .cores {
+        padding: 50px 7%;
+    }
+
+    .cores > h2 {
+        font-size: 1.9rem;
+    }
+
+    .paleta,
+    .paleta.tres {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   PÁGINA INICIAL — Seção final (chamada para ação)
+   ============================================================ */
+
+.secao-extra {
+    margin: 20px 8% 75px;
+    padding: 55px 30px;
+    text-align: center;
+    background: #E4EEF0;
+    border-radius: 24px;
+}
+
+.secao-extra h2 {
+    color: #16587B;
+    font-size: 2rem;
+    line-height: 1.3;
+    margin-bottom: 15px;
+}
+
+.secao-extra p {
+    max-width: 700px;
+    margin: 0 auto 25px;
+    color: #526975;
+}
+
+@media (max-width: 650px) {
+    .secao-extra {
+        margin: 10px 7% 45px;
+        padding: 35px 22px;
+    }
+
+    .secao-extra h2 {
+        font-size: 1.65rem;
+    }
+}
+
+/* ============================================================
+   PÁGINAS INTERNAS — Cabeçalho da página e conteúdo
+   ============================================================ */
+
+.page-header {
+    padding: 55px 8% 45px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E6E0D5;
+}
+
+.page-header h1 {
+    color: #16587B;
+    font-size: clamp(1.9rem, 3.2vw, 2.7rem);
+    line-height: 1.2;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.page-header p {
+    color: #657781;
+    max-width: 640px;
+}
+
+.page-header .voltar {
+    display: inline-block;
+    margin-bottom: 14px;
+}
+
+.conteudo {
+    padding: 50px 8% 75px;
+}
+
+.conteudo-estreito {
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.bloco {
+    background: #FFFFFF;
+    border: 1px solid #E6E0D5;
+    border-radius: 18px;
     padding: 30px;
+    box-shadow: 0 5px 20px #344B590A;
+}
+
+.bloco + .bloco {
+    margin-top: 24px;
+}
+
+.bloco h2 {
+    color: #16587B;
+    font-size: 1.4rem;
+    margin-bottom: 14px;
+}
+
+@media (max-width: 650px) {
+    .page-header {
+        padding: 40px 7% 32px;
+    }
+
+    .conteudo {
+        padding: 35px 7% 55px;
+    }
+
+    .bloco {
+        padding: 22px;
+    }
+}
+
+/* ============================================================
+   ATIVIDADES — Filtros, badges e metadados
+   ============================================================ */
+
+.filtros {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.filtros .campo {
+    flex: 1 1 200px;
+    margin-bottom: 0;
+}
+
+/* ===== BADGES E METADADOS ===== */
+
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    background: #E4EEF0;
+    color: #16587B;
+    margin-bottom: 12px;
+    align-self: flex-start;
+}
+
+.badge-confirmada,
+.badge-ativa {
+    background: #DDEFDD;
+    color: #2D6A3E;
+}
+
+.badge-espera {
+    background: #FBEFD0;
+    color: #8A6A12;
+}
+
+.badge-inativa,
+.badge-lotada {
+    background: #F3DEDB;
+    color: #A33A2F;
+}
+
+.meta-lista {
+    list-style: none;
+    font-size: 0.9rem;
+    color: #526975;
+    margin-bottom: 18px;
+}
+
+.meta-lista li + li {
+    margin-top: 4px;
+}
+
+.meta-lista strong {
+    color: #344B59;
+}
+
+/* ============================================================
+   INSCRIÇÕES / PAINEL — Listas
+   ============================================================ */
+
+.lista {
+    list-style: none;
+}
+
+.lista-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 20px 0;
+    border-bottom: 1px solid #E6E0D5;
+}
+
+.lista-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.lista-item:first-child {
+    padding-top: 0;
+}
+
+.lista-item h3 {
+    color: #16587B;
+    font-size: 1.15rem;
+    margin-bottom: 4px;
+}
+
+.lista-item p {
+    color: #657781;
+    font-size: 0.92rem;
+}
+
+.lista-acoes {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ============================================================
+   PAINEL — Estatísticas
+   ============================================================ */
+
+.estatisticas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    margin-bottom: 30px;
+}
+
+.estatistica {
+    background: #16587B;
+    color: #FFFFFF;
+    border-radius: 18px;
+    padding: 26px 28px;
+    box-shadow: 0 10px 25px #16587B25;
+}
+
+.estatistica span {
+    display: block;
+    color: #BBDDEC;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.estatistica strong {
+    font-family: "Nunito", sans-serif;
+    font-size: 2.4rem;
+    line-height: 1.1;
+}
+
+@media (max-width: 650px) {
+    .estatisticas {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   TABELAS
+   ============================================================ */
+
+.tabela-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.94rem;
+}
+
+th {
+    text-align: left;
+    color: #16587B;
+    font-family: "Nunito", sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0 14px 12px 0;
+    border-bottom: 2px solid #E4EEF0;
+}
+
+td {
+    padding: 14px 14px 14px 0;
+    border-bottom: 1px solid #E6E0D5;
+    color: #526975;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+/* ============================================================
+   FORMULÁRIOS (campos, mensagens, ações)
+   ============================================================ */
+
+.campo {
+    margin-bottom: 20px;
+}
+
+.campo label {
+    display: block;
+    color: #16587B;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 1rem;
+    color: #344B59;
+    background: #FFFFFF;
+    border: 1.5px solid #CFC8BA;
+    border-radius: 10px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.campo textarea {
+    resize: vertical;
+    min-height: 130px;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    outline: none;
+    border-color: #16587B;
+    box-shadow: 0 0 0 3px #84B3CE55;
+}
+
+.campo small {
+    display: block;
+    color: #657781;
+    font-size: 0.82rem;
+    margin-top: 5px;
+}
+
+.campos-linha {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.mensagem {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    margin-bottom: 20px;
+}
+
+.mensagem:empty {
+    display: none;
+}
+
+.mensagem-erro {
+    background: #F3DEDB;
+    color: #A33A2F;
+}
+
+.mensagem-sucesso {
+    background: #DDEFDD;
+    color: #2D6A3E;
+}
+
+.mensagem-info {
+    background: #E4EEF0;
+    color: #16587B;
+}
+
+.form-acoes {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+@media (max-width: 650px) {
+    .campos-linha {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   AUTENTICAÇÃO — Login e Registro
+   ============================================================ */
+
+.auth {
+    padding: 60px 8% 75px;
+    display: flex;
+    justify-content: center;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 480px;
+    background: #FFFFFF;
+    border: 1px solid #E6E0D5;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 15px 35px #344B5912;
+}
+
+.auth-card h1 {
+    color: #16587B;
+    font-size: 2rem;
+    line-height: 1.2;
+    margin-bottom: 8px;
+}
+
+.auth-card > p {
+    color: #657781;
+    margin-bottom: 26px;
+}
+
+.auth-rodape {
+    margin-top: 22px;
+    text-align: center;
+    font-size: 0.92rem;
+    color: #657781;
+}
+
+@media (max-width: 650px) {
+    .auth {
+        padding: 35px 7% 55px;
+    }
+
+    .auth-card {
+        padding: 28px 22px;
+    }
+}
+
+/* ============================================================
+   ATIVIDADES — Página de detalhes
+   ============================================================ */
+
+.detalhes-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 28px;
+    align-items: start;
+}
+
+.detalhes-grid .bloco + .bloco {
+    margin-top: 0;
+}
+
+.vagas {
+    font-family: "Nunito", sans-serif;
+    color: #16587B;
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.vagas-rotulo {
+    color: #657781;
+    font-size: 0.9rem;
+    margin-bottom: 18px;
+}
+
+@media (max-width: 1000px) {
+    .detalhes-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   ESTADO VAZIO
+   ============================================================ */
+
+.vazio {
+    text-align: center;
+    padding: 45px 20px;
+    color: #657781;
+}
+
+.vazio h3 {
+    color: #16587B;
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+}
+
+.vazio .botao {
+    margin-top: 18px;
+}
+
+/* ============================================================
+   FOOTER (RODAPÉ)
+   ============================================================ */
+
+footer {
+    padding: 25px;
     background: #16587B;
     text-align: center;
     margin-top: auto;
 }
+
 .footer {
-color: #f5f3ed;
-line-height: 5px;
+    color: #FFFFFF;
+    margin: 0;
+    font-size: 0.9rem;
 }
