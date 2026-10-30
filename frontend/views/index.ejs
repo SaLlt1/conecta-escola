@@ -1,103 +1,34 @@
-<!-- views/index.ejs (a preencher: página inicial) -->
 <%- include('partials/header', { titulo: 'Início' }) %>
 <%- include('partials/nav', { pagina: 'inicio' }) %>
-
-<main>
-
+<main class="home">
     <section class="hero" id="inicio">
-
         <div class="hero-text">
-            <h1>Conectando alunos a atividades e grupos escolares.</h1>
-
-            <p>
-                Descubra clubes, oficinas e grupos de interesse,
-                inscreva-se nas vagas e acompanhe tudo
-                em um espaço criado para aproximar alunos, com sua escola e responsáveis.
-            </p>
-
-            <a href="/atividades" class="botao">
-                Explorar atividades
-            </a>
+            <span class="eyebrow">CONHEÇA O CONECTA ESCOLA</span>
+            <h1>Um mundo de<br><em>possibilidades!</em></h1>
+            <p>Atividades, clubes e novas amizades para fazer parte da sua jornada. Descubra o que desperta sua curiosidade e cresça junto com a comunidade da sua escola.</p>
+            <div class="hero-actions"><a href="/atividades" class="botao">Explorar atividades</a><a href="/registro" class="texto-link"><span aria-hidden="true">⟶</span> Criar minha conta</a></div>
+            <div class="hero-note"><span class="note-dot"></span> Aprender, criar e pertencer. Tudo em um só lugar.</div>
         </div>
-
-        <div class="hero-card">
-            <span>CONECTA ESCOLA · 2026</span>
-
-            <h2>Conhecimento que conecta.</h2>
-
-            <p>
-                Incentivamos a participação, a criatividade
-                e o aprendizado de forma colaborativa e educativa.
-            </p>
+        <div class="hero-image" role="img" aria-label="Estudantes sorrindo juntos no campus escolar"><div class="image-caption"><span>01 / 03</span><strong>Seu próximo capítulo começa aqui.</strong></div></div>
+    </section>
+    <section class="about-section" id="sobre">
+        <div class="about-copy">
+            <span class="eyebrow">A ESCOLA É MUITO MAIS</span><h2>Descubra o que<br><em>move você.</em></h2>
+            <p class="about-lead">O Conecta Escola aproxima alunos de experiências que fazem a diferença.</p>
+            <p>Encontre atividades dentro e fora da sala de aula, conheça pessoas com interesses parecidos e experimente algo novo. Da robótica ao teatro, há sempre um espaço para aprender e participar.</p>
+            <ul class="benefits"><li>Atividades para diferentes interesses e talentos</li><li>Inscrição simples e acompanhamento em um só lugar</li><li>Uma comunidade escolar mais próxima e participativa</li></ul>
+            <a href="/atividades" class="texto-link">Conheça as atividades <span aria-hidden="true">→</span></a>
         </div>
-
+        <div class="about-visual"><div class="about-photo" role="img" aria-label="Estudantes caminhando pelo campus"></div><div class="photo-stamp"><strong>Mais do que<br>uma atividade.</strong><span>Uma nova descoberta.</span></div></div>
     </section>
-
-    <section class="cores">
-
-        <h2>Como funciona</h2>
-
-        <p>
-            Do cadastro à inscrição, tudo em poucos passos
-        </p>
-
-        <div class="paleta">
-
-            <article class="cor">
-                <div class="amostra azul"></div>
-                <div class="info">
-                    <h3>Crie sua conta</h3>
-                    <p>Cadastre-se com o e-mail institucional como aluno ou responsável.</p>
-                    <a href="/registro" class="link-card">Cadastrar-se →</a>
-                </div>
-            </article>
-
-            <article class="cor">
-                <div class="amostra bege"></div>
-                <div class="info">
-                    <h3>Escolha seus interesses</h3>
-                    <p>Selecione categorias como xadrez, robótica, teatro ou programação.</p>
-                    <a href="/atividades" class="link-card">Ver categorias →</a>
-                </div>
-            </article>
-
-            <article class="cor">
-                <div class="amostra marrom-claro"></div>
-                <div class="info">
-                    <h3>Inscreva-se</h3>
-                    <p>Garanta sua vaga ou entre na lista de espera quando a atividade estiver cheia.</p>
-                    <a href="/atividades" class="link-card">Ver atividades →</a>
-                </div>
-            </article>
-
-            <article class="cor">
-                <div class="amostra marrom"></div>
-                <div class="info">
-                    <h3>Acompanhe</h3>
-                    <p>Veja suas inscrições, posição na lista de espera ou desista quando quiser!</p>
-                    <a href="/inscricoes" class="link-card">Minhas inscrições →</a>
-                </div>
-            </article>
-
+    <section class="features-section">
+        <div class="section-heading"><span class="eyebrow">SEU CAMINHO, DO SEU JEITO</span><h2>Feito para você <em>participar.</em></h2></div>
+        <div class="feature-grid">
+            <article class="feature-card"><span class="feature-icon" aria-hidden="true">✳</span><h3>Encontre seu grupo</h3><p>Explore clubes e atividades que combinam com aquilo que você gosta.</p></article>
+            <article class="feature-card"><span class="feature-icon" aria-hidden="true">↗</span><h3>Experimente algo novo</h3><p>Descubra outros interesses, desenvolva habilidades e ganhe confiança.</p></article>
+            <article class="feature-card"><span class="feature-icon" aria-hidden="true">♡</span><h3>Faça parte</h3><p>Inscreva-se com facilidade e acompanhe suas atividades em um só lugar.</p></article>
         </div>
-
     </section>
-
-    <section class="secao-extra">
-
-        <h2>Responsável por uma atividade?</h2>
-
-        <p>
-            Cadastre sua atividade, defina local, horário e número de vagas.
-            Acompanhe a lista de inscritos pelo painel.
-        </p>
-
-        <a href="/painel" class="botao">
-            Acessar o painel →
-        </a>
-
-    </section>
-
+    <section class="secao-extra"><span class="eyebrow">PRONTO PARA COMEÇAR?</span><h2>Tem algo esperando por você.</h2><p>Explore as atividades disponíveis e encontre seu próximo lugar favorito na escola.</p><a href="/atividades" class="botao">Ver atividades <span aria-hidden="true">→</span></a></section>
 </main>
-
 <%- include('partials/footer') %>
