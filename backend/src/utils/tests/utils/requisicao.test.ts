@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { lerId, lerTexto } from "requisicao";
+import { lerId, lerTexto } from "../../requisicao";
 
 describe("lerId", () => {
   it("converte uma string de número inteiro positivo", () => {
