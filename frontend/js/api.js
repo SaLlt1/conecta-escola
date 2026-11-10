@@ -166,14 +166,21 @@ const Api = (function () {
 
         const usuario = getUsuario();
         const logado = !!(getToken() && usuario);
+        const ehResponsavel = logado && usuario.papel === "responsavel";
 
-        const linkPainel = nav.querySelector('a[href="/painel"]');
+        const linkAtividades = nav.querySelector('a[href="/atividades"]');
         const linkInscricoes = nav.querySelector('a[href="/inscricoes"]');
+        const linkPainel = nav.querySelector('a[href="/painel"]');
         const linkLogin = nav.querySelector('a[href="/login"]');
 
-        // Painel só para responsáveis; e "Minhas inscrições" só para alunos
-        if (linkPainel && !(logado && usuario.papel === "responsavel")) linkPainel.hidden = true;
-        if (linkInscricoes && logado && usuario.papel === "responsavel") linkInscricoes.hidden = true;
+        // Atividades: só para quem está logado
+        if (linkAtividades) linkAtividades.hidden = !logado;
+
+        // Minhas inscrições: só para alunos logados
+        if (linkInscricoes) linkInscricoes.hidden = !logado || ehResponsavel;
+
+        // Painel: só para responsáveis logados
+        if (linkPainel) linkPainel.hidden = !ehResponsavel;
 
         // Login vira "Sair (Nome)" quando há sessão
         if (linkLogin && logado) {
