@@ -67,6 +67,23 @@ export async function atualizarMeusInteresses(
   }
 }
 
+// Devolve os interesses salvos do próprio usuário (fonte da verdade é o banco).
+export async function meusInteresses(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const [lista] = await db.query<Linha<Categoria>[]>(
+      `SELECT categoria.id, categoria.nome
+       FROM interesse_usuario
+       JOIN categoria ON categoria.id = interesse_usuario.categoria_id
+       WHERE interesse_usuario.usuario_id = ?
+       ORDER BY categoria.nome`,
+      [req.usuario!.id]
+    );
+    res.json(lista);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function agregados(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     res.json(await interessesAgregados());
