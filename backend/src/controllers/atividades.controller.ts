@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { ResultSetHeader } from "mysql2";
 import db from "../db/connection";
 import { ordenarPorAfinidade } from "../services/afinidade.service";
-import { contarConfirmados } from "../services/vagas.service";
+import { contarConfirmados, reequilibrarFila } from "../services/vagas.service";
 import { lerId, lerTexto } from "../utils/requisicao";
 import type { Atividade, Linha } from "../types";
 
@@ -21,8 +21,12 @@ export async function listar(req: Request, res: Response, next: NextFunction): P
   try {
     const categoriaId = lerTexto(req.query.categoria_id);
 
+    // A contagem de confirmados vem na própria query (evita uma consulta por atividade).
     let sql = `
-      SELECT atividade.*, categoria.nome AS categoria_nome
+      SELECT atividade.*, categoria.nome AS categoria_nome,
+        (SELECT COUNT(*) FROM inscricao
+          WHERE inscricao.atividade_id = atividade.id
+            AND inscricao.status = 'confirmada') AS inscritos_confirmados
       FROM atividade
       JOIN categoria ON categoria.id = atividade.categoria_id
       WHERE atividade.status = 'ativa'
@@ -36,8 +40,15 @@ export async function listar(req: Request, res: Response, next: NextFunction): P
 
     sql += " ORDER BY atividade.id DESC";
 
-    const [linhas] = await db.query<Linha<AtividadeComCategoria>[]>(sql, params);
-    const atividades = await Promise.all(linhas.map(comVagasRestantes));
+    const [linhas] = await db.query<
+      Linha<AtividadeComCategoria & { inscritos_confirmados: number }>[]
+    >(sql, params);
+
+    const atividades = linhas.map((a) => ({
+      ...a,
+      vagas_restantes: Math.max(a.vagas - a.inscritos_confirmados, 0),
+    }));
+
     const usuarioId = req.usuario ? req.usuario.id : null;
     const comAfinidade = await ordenarPorAfinidade(atividades, usuarioId);
 
@@ -163,6 +174,22 @@ export async function atualizar(req: Request, res: Response, next: NextFunction)
       return;
     }
 
+    // Não deixa reduzir as vagas abaixo do número de alunos já confirmados.
+    if (atualizacoes.vagas !== undefined) {
+      const confirmados = await contarConfirmados(atividade.id);
+      if (Number(atualizacoes.vagas) < confirmados) {
+        res.status(409).json({
+          erro: `Não é possível reduzir as vagas para menos que os ${confirmados} inscritos confirmados.`,
+        });
+        return;
+      }
+    }
+
+    if (atualizacoes.nome !== undefined && !String(atualizacoes.nome).trim()) {
+      res.status(400).json({ erro: "Nome da atividade é obrigatório." });
+      return;
+    }
+
     const chaves = Object.keys(atualizacoes);
     if (chaves.length === 0) {
       res.status(400).json({ erro: "Nenhum campo para atualizar." });
@@ -172,6 +199,11 @@ export async function atualizar(req: Request, res: Response, next: NextFunction)
     const sets = chaves.map((c) => `${c} = ?`).join(", ");
     const valores = chaves.map((c) => atualizacoes[c]);
     await db.query(`UPDATE atividade SET ${sets} WHERE id = ?`, [...valores, atividade.id]);
+
+    // Se as vagas aumentaram, quem estava na espera é promovido automaticamente.
+    if (atualizacoes.vagas !== undefined) {
+      await reequilibrarFila(atividade.id);
+    }
 
     const [[atualizada]] = await db.query<Linha<Atividade>[]>(
       "SELECT * FROM atividade WHERE id = ?",
