@@ -19,4 +19,7 @@ export const env = {
   DB_PASSWORD: process.env.DB_PASSWORD || "",
   DB_NAME: process.env.DB_NAME || "mural_atividades",
   DOMINIO_INSTITUCIONAL: process.env.DOMINIO_INSTITUCIONAL || null,
+  CORS_ORIGIN: process.env.CORS_ORIGIN || "http://localhost:3000",
+  // Código que só a coordenação conhece: sem ele, ninguém vira "responsavel".
+  CODIGO_RESPONSAVEL: process.env.CODIGO_RESPONSAVEL || null,
 };
