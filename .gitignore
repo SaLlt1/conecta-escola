@@ -23,3 +23,7 @@ build/
 npm-debug.log*
 
 tmp/
+
+.backup-antes-correcoes/
+
+.backup-antes-correcoes/
