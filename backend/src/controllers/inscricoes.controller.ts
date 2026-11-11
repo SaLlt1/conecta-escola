@@ -44,6 +44,11 @@ export async function inscrever(req: Request, res: Response, next: NextFunction)
 
     res.status(201).json({ ...inscricao, mensagem });
   } catch (err) {
+    // Dois cliques simultâneos: a chave UNIQUE do banco barra o segundo.
+    if ((err as { code?: string }).code === "ER_DUP_ENTRY") {
+      res.status(409).json({ erro: "Você já está inscrito nesta atividade." });
+      return;
+    }
     next(err);
   }
 }
