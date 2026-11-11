@@ -17,7 +17,7 @@ import interessesRoutes from "./routes/interesses.routes";
 const app = express();
 
 // Configurações gerais
-app.use(cors());
+app.use(cors({ origin: env.CORS_ORIGIN }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
