@@ -4,6 +4,9 @@ import { autenticar, somenteResponsavel } from "../middlewares/auth.middleware";
 
 const router = Router();
 
+// GET /meus-interesses — devolve os interesses salvos do próprio usuário.
+router.get("/meus-interesses", autenticar, interessesController.meusInteresses);
+
 // PUT /meus-interesses — qualquer usuário autenticado define os próprios interesses.
 router.put("/meus-interesses", autenticar, interessesController.atualizarMeusInteresses);
 
