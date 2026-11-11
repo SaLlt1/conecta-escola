@@ -24,6 +24,16 @@
         } catch (e) {}
     }
 
+    // Fonte da verdade é o servidor; o localStorage fica só como reserva se a API falhar.
+    async function carregarSalvos() {
+        try {
+            const meus = await Api.chamar("/meus-interesses");
+            return new Set(meus.map(function (c) { return c.id; }));
+        } catch (e) {
+            return lerSalvos();
+        }
+    }
+
     // ---------- Escolha de interesses (aluno e responsável) ----------
 
     async function iniciarFormulario() {
@@ -32,7 +42,7 @@
 
         try {
             const categorias = await Api.chamar("/categorias");
-            const salvos = lerSalvos();
+            const salvos = await carregarSalvos();
 
             lista.replaceChildren();
             categorias.forEach(function (categoria) {
