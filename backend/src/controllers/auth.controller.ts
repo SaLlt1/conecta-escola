@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { compare, hash } from "bcryptjs";
+import { timingSafeEqual } from "crypto";
 import type { ResultSetHeader } from "mysql2";
 import jwt from "jsonwebtoken";
 import db from "../db/connection";
@@ -19,9 +20,22 @@ function emailValido(email: unknown): boolean {
   return true;
 }
 
+// Compara o código informado com o do .env sem vazar informação pelo tempo de resposta.
+function codigoResponsavelCorreto(informado: unknown): boolean {
+  const esperado = env.CODIGO_RESPONSAVEL;
+  if (!esperado || typeof informado !== "string") return false;
+  const a = Buffer.from(informado);
+  const b = Buffer.from(esperado);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 export async function registrar(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { nome, email_institucional, senha, papel, turma } = req.body || {};
+    const { nome, senha, papel, turma, codigo_acesso } = req.body || {};
+    const email_institucional =
+      typeof req.body?.email_institucional === "string"
+        ? req.body.email_institucional.trim().toLowerCase()
+        : "";
 
     if (!nome || !String(nome).trim()) {
       res.status(400).json({ erro: "Nome é obrigatório." });
@@ -40,6 +54,12 @@ export async function registrar(req: Request, res: Response, next: NextFunction)
       return;
     }
 
+    // Só a coordenação (que conhece o código) pode criar contas de responsável.
+    if (papel === "responsavel" && !codigoResponsavelCorreto(codigo_acesso)) {
+      res.status(403).json({ erro: "Código de responsável inválido." });
+      return;
+    }
+
     const [existentes] = await db.query<Linha<{ id: number }>[]>(
       "SELECT id FROM usuario WHERE email_institucional = ?",
       [email_institucional]
@@ -54,7 +74,7 @@ export async function registrar(req: Request, res: Response, next: NextFunction)
     const [resultado] = await db.query<ResultSetHeader>(
       `INSERT INTO usuario (nome, email_institucional, senha_hash, papel, turma)
        VALUES (?, ?, ?, ?, ?)`,
-      [nome, email_institucional, senhaHash, papel, turma || null]
+      [String(nome).trim(), email_institucional, senhaHash, papel, turma || null]
     );
 
     const [[usuario]] = await db.query<Linha<Omit<Usuario, "senha_hash">>[]>(
@@ -70,7 +90,11 @@ export async function registrar(req: Request, res: Response, next: NextFunction)
 
 export async function login(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const { email_institucional, senha } = req.body || {};
+    const { senha } = req.body || {};
+    const email_institucional =
+      typeof req.body?.email_institucional === "string"
+        ? req.body.email_institucional.trim().toLowerCase()
+        : "";
 
     if (!email_institucional || !senha) {
       res.status(400).json({ erro: "E-mail e senha são obrigatórios." });
