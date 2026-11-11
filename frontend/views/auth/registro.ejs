@@ -1,4 +1,4 @@
-<!-- views/auth/registro.ejs (a preencher) -->
+<!-- views/auth/registro.ejs -->
 <%- include('../partials/header', { titulo: 'Cadastro' }) %>
 <%- include('../partials/nav', { pagina: 'login' }) %>
 
@@ -51,6 +51,13 @@
 
                 </div>
 
+                <div class="campo" id="campo-codigo" hidden>
+                    <label for="codigo_acesso">Código de responsável</label>
+                    <input type="password" id="codigo_acesso" name="codigo_acesso"
+                           placeholder="Fornecido pela coordenação" autocomplete="off">
+                    <small>Necessário apenas para professores e coordenação.</small>
+                </div>
+
                 <button type="submit" class="botao botao-bloco">Criar conta</button>
 
             </form>
@@ -65,5 +72,23 @@
     </section>
 
 </main>
+
+<script>
+    // Mostra o campo do código só quando o usuário escolhe "Responsável".
+    (function () {
+        var papel = document.getElementById("papel");
+        var campo = document.getElementById("campo-codigo");
+        if (!papel || !campo) return;
+
+        function atualizar() {
+            var ehResponsavel = papel.value === "responsavel";
+            campo.hidden = !ehResponsavel;
+            if (!ehResponsavel) document.getElementById("codigo_acesso").value = "";
+        }
+
+        papel.addEventListener("change", atualizar);
+        atualizar();
+    })();
+</script>
 
 <%- include('../partials/footer', { script: 'login' }) %>
